@@ -7,19 +7,137 @@ output:
 
 
 ## Loading and preprocessing the data
-
+Questions: 
+  - Code for reading in the dataset and/or processing the data
+  
+```{r}
+library(tidyverse)   # for the data analysis.
+library(lubridate)  # for date analysis.
+activity <- read.csv("activity.csv") %>%
+  mutate(date = as.Date(date))
+```
 
 
 ## What is mean total number of steps taken per day?
+Questions:
+ - Histogram of the total number of steps taken each day
+ - Mean and median number of steps taken each day
+ 
+```{r, summary_values, message = FALSE}
+activity %>%
+  group_by(date) %>%
+  summarise(mean_steps = mean(steps, na.rm = TRUE), median_steps = median(steps)) %>%
+  ungroup()
+```
 
+Histogram:
+
+```{r, histogram}
+activity %>%
+  ggplot(aes(x = steps)) + 
+  geom_histogram(binwidth = 78, fill = "red", color = "#2D2D2D") + 
+  theme_light()
+```
 
 
 ## What is the average daily activity pattern?
 
+Questions: 
+  - Time series plot of the average number of steps taken
+  - The 5-minute interval that, on average, contains the maximum number of steps
 
+Time plot series:
+
+
+```{r, message = FALSE}
+activity %>% 
+  group_by(interval) %>%
+  summarise(mean_steps = mean(steps, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = interval, y = mean_steps)) + 
+  geom_line() + 
+  theme_light() + 
+  labs(y = "Mean of steps", x = "Date (2012)")
+
+```
+Interval with the maximum number of steps
+
+```{r, message = FALSE}
+activity %>% 
+  group_by(date) %>%
+  summarise(steps = mean(steps)) %>%
+  pull(steps) %>%
+  max(na.rm = TRUE) -> steps_extreme
+
+activity %>%
+  group_by(date) %>%
+  summarise(steps = mean(steps)) %>%
+  filter(steps == steps_extreme)
+# the 5-minute interval of 2012-11-23 have, on average, the maximum number of steps.
+```
 
 ## Imputing missing values
 
+Rows with missing values:
 
+
+```{r}
+activity %>%
+  filter(is.na(steps)) %>%
+  nrow()
+```
+
+To fill the missing values, we can add the mean grouped by the `interval` variable; i.e., when tha value is NA, we select all values which have the same label for identification.
+
+```{r}
+data_filled <- activity
+
+for(index in unique(activity[["interval"]])){
+  index_activity <- activity %>% 
+    filter(interval == index)
+  index_mean <- mean(index_activity[["steps"]], na.rm = TRUE)
+
+  rows <- which(data_filled[["interval"]] == index)
+  
+  for(label_row in rows){
+    if(is.na(data_filled[["steps"]][label_row])){
+      data_filled[["steps"]][label_row] <- index_mean
+      
+    }
+  }
+}
+```
+
+Histograms of `data_filled`:
+```{r}
+data_filled %>%
+  ggplot(aes(x = steps)) + 
+  geom_histogram(fill = "red", color = "#2D2D2D", binwidth = 78) + 
+  theme_light()
+```
+
+Mean and median of `data_filled`.
+
+```{r, message = FALSE}
+data_filled %>%
+  group_by(date) %>%
+  summarise(mean = mean(steps), median = median(steps)) %>%
+  ungroup()
+```
+
+We hadd NaN or NA values for median and for mean before inputing the missing values; now, we have a real number in it. 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
+```{r, message = FALSE}
+data_filled %>%
+  mutate(isweekend = ifelse(weekdays(date) %in% c("sábado", "domingo"), "Weekend", "Weekday")) %>% 
+  group_by(interval, isweekend) %>% 
+  summarise(mean_steps = mean(steps)) %>%
+  ungroup() %>%
+  ggplot() + 
+  geom_line(aes(x = interval, y = mean_steps, group = isweekend)) + 
+  theme_light() + 
+  facet_grid(isweekend~.)
+```
