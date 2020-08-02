@@ -14,41 +14,7 @@ Questions:
 
 ```r
 library(tidyverse)   # for the data analysis.
-```
-
-```
-## -- Attaching packages ---------------- tidyverse 1.3.0 --
-```
-
-```
-## v ggplot2 3.3.2     v purrr   0.3.4
-## v tibble  3.0.1     v dplyr   1.0.0
-## v tidyr   1.1.0     v stringr 1.4.0
-## v readr   1.3.1     v forcats 0.5.0
-```
-
-```
-## -- Conflicts ------------------- tidyverse_conflicts() --
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()
-```
-
-```r
 library(lubridate)  # for date analysis.
-```
-
-```
-## 
-## Attaching package: 'lubridate'
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     date, intersect, setdiff, union
-```
-
-```r
 activity <- read.csv("activity.csv") %>%
   mutate(date = as.Date(date))
 ```
@@ -90,14 +56,21 @@ Histogram:
 
 
 ```r
-activity %>%
-  ggplot(aes(x = steps)) + 
-  geom_histogram(binwidth = 78, fill = "red", color = "#2D2D2D") + 
+activity %>% 
+  group_by(date) %>%
+  summarise(daily_steps = sum(steps)) %>%
+  ungroup() %>%
+  ggplot(aes(x = daily_steps)) + 
+  geom_histogram(binwidth = 4999, fill = "red", color = "#2D2D2D") + 
   theme_light()
 ```
 
 ```
-## Warning: Removed 2304 rows containing non-finite values (stat_bin).
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```
+## Warning: Removed 8 rows containing non-finite values (stat_bin).
 ```
 
 ![](PA1_template_files/figure-html/histogram-1.png)<!-- -->
@@ -196,8 +169,11 @@ Histograms of `data_filled`:
 
 ```r
 data_filled %>%
-  ggplot(aes(x = steps)) + 
-  geom_histogram(fill = "red", color = "#2D2D2D", binwidth = 78) + 
+  group_by(date) %>%
+  summarise(daily_steps = sum(steps)) %>%
+  ungroup() %>%
+  ggplot(aes(x = daily_steps)) + 
+  geom_histogram(fill = "red", color = "#2D2D2D", binwidth = 4999) + 
   theme_light()
 ```
 

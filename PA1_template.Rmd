@@ -11,7 +11,7 @@ Questions:
 
   - Code for reading in the dataset and/or processing the data
   
-```{r}
+```{r, message = FALSE}
 library(tidyverse)   # for the data analysis.
 library(lubridate)  # for date analysis.
 activity <- read.csv("activity.csv") %>%
@@ -36,9 +36,12 @@ activity %>%
 Histogram:
 
 ```{r, histogram}
-activity %>%
-  ggplot(aes(x = steps)) + 
-  geom_histogram(binwidth = 78, fill = "red", color = "#2D2D2D") + 
+activity %>% 
+  group_by(date) %>%
+  summarise(daily_steps = sum(steps)) %>%
+  ungroup() %>%
+  ggplot(aes(x = daily_steps)) + 
+  geom_histogram(binwidth = 4999, fill = "red", color = "#2D2D2D") + 
   theme_light()
 ```
 
@@ -114,10 +117,13 @@ for(index in unique(activity[["interval"]])){
 ```
 
 Histograms of `data_filled`:
-```{r}
+```{r, message = FALSE}
 data_filled %>%
-  ggplot(aes(x = steps)) + 
-  geom_histogram(fill = "red", color = "#2D2D2D", binwidth = 78) + 
+  group_by(date) %>%
+  summarise(daily_steps = sum(steps)) %>%
+  ungroup() %>%
+  ggplot(aes(x = daily_steps)) + 
+  geom_histogram(fill = "red", color = "#2D2D2D", binwidth = 4999) + 
   theme_light()
 ```
 
