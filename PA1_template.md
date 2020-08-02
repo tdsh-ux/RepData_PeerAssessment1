@@ -105,26 +105,27 @@ Interval with the maximum number of steps
 
 ```r
 activity %>% 
-  group_by(date) %>%
-  summarise(steps = mean(steps)) %>%
+  group_by(interval) %>%
+  summarise(steps = mean(steps, na.rm = TRUE)) %>%
   pull(steps) %>%
   max(na.rm = TRUE) -> steps_extreme
 
+
 activity %>%
-  group_by(date) %>%
-  summarise(steps = mean(steps)) %>%
+  group_by(interval) %>%
+  summarise(steps = mean(steps, na.rm = TRUE)) %>%
   filter(steps == steps_extreme)
 ```
 
 ```
 ## # A tibble: 1 x 2
-##   date       steps
-##   <date>     <dbl>
-## 1 2012-11-23  73.6
+##   interval steps
+##      <int> <dbl>
+## 1      835  206.
 ```
 
 ```r
-# the 5-minute interval of 2012-11-23 have, on average, the maximum number of steps.
+# the 5-minute interval of number 835 has, on average, the maximum number of steps.
 ```
 
 ## Imputing missing values
