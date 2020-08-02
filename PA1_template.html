@@ -509,6 +509,7 @@ for(index in unique(activity[[&quot;interval&quot;]])){
 </div>
 <div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>
+<p>There is a slightly difference, as the plot shows.</p>
 <pre class="r"><code>data_filled %&gt;%
   mutate(isweekend = ifelse(weekdays(date) %in% c(&quot;sábado&quot;, &quot;domingo&quot;), &quot;Weekend&quot;, &quot;Weekday&quot;)) %&gt;% 
   group_by(interval, isweekend) %&gt;% 

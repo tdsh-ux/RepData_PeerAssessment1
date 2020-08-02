@@ -234,7 +234,7 @@ We hadd NaN or NA values for median and for mean before inputing the missing val
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-
+There is a slightly difference, as the plot shows.
 
 ```r
 data_filled %>%
