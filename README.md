@@ -100,7 +100,7 @@ activity %>%
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
-Interval with the maximum number of steps
+Interval with the maximum number of steps: 
 
 
 ```r
@@ -207,7 +207,7 @@ data_filled %>%
 ## # ... with 51 more rows
 ```
 
-We hadd NaN or NA values for median and for mean before inputing the missing values; now, we have a real number in it. 
+We had NaN or NA values for median and for mean before inputing the missing values; now, we have a real number in it. 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
